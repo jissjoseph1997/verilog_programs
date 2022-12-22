@@ -1,34 +1,35 @@
-module apb_ram
-  (input presetn,
-   input pclk,
-   input psel,
-   input penable,
-   input pwrite,
-   input [31:0] paddr, pwdata,
-   output reg [31:0] prdata,
-   output reg pready,pslverr 
-  );
+///////Design Code
+
+
+
+module apb_ram (
+  input presetn,
+  input pclk,
+  input psel,
+  input penable,
+  input pwrite,
+  input [31:0] paddr, pwdata,
+  output reg [31:0] prdata,
+  output reg pready, pslverr
+);
   
   reg [31:0] mem [32];
   
   typedef enum {idle = 0, setup = 1, access = 2, transfer = 3} state_type;
-  state_type state = idle;
-  
+ 
+  state_type state = idle, next_state = idle; 
   
   always@(posedge pclk)
     begin
-      if(presetn == 1'b0) //active low 
-        begin
+      if(presetn == 1'b0) 
+      begin
         state <= idle;
         prdata <= 32'h00000000;
         pready <= 1'b0;
-        pslverr <= 1'b0;
-        
-        for(int i = 0; i < 32; i++) 
-        begin
+         pslverr <= 1'b0;
+        for(int i = 0; i < 32; i++) begin
           mem[i] <= 0;
         end
-        
        end 
       else 
         begin
@@ -115,3 +116,24 @@ module apb_ram
   
   
 endmodule
+
+
+
+
+///////////////////////////////////Interface Code
+
+
+
+interface abp_if;
+  
+  logic presetn;
+  logic pclk;
+  logic psel;
+  logic penable;
+  logic pwrite;
+  logic [31:0] paddr, pwdata;
+  logic [31:0] prdata;
+  logic pready, pslverr;  
+  
+  
+endinterface
